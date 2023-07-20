@@ -4,13 +4,17 @@ import requests
 
 # ask the user about the search request
 search_request = input('Hey! If you want to search for GIFs \
-                       just enter the word to search: ')
+just enter the word to search: ')
 search_request = search_request.replace(' ', '+')
 
 
 # ask the user about the output amount with negative values and max check
 def change_to_max() -> int:
-    output_limit = int(input('Okay how many images you want? (max - 30): '))
+    try:
+        output_limit = int(input('Okay how many images you want? (max - 30):'))
+    except ValueError:
+        return print('Sorry, you entered nothing.')
+
     if output_limit > 30:
         return 30
     elif output_limit <= 0:
@@ -33,5 +37,10 @@ r = requests.get('https://api.giphy.com/v1/gifs/search', params=search_payload)
 results = r.json()
 
 # print all links
-for i in range(0, search_payload['limit']):
-    print(results['data'][i]['images']['original']['url'])
+try:
+    for i in range(0, search_payload['limit']):
+        print(results['data'][i]['images']['original']['url'])
+except IndexError:
+    print('Sorry, nothing found. Try another search request pls')
+except TypeError:
+    print('Try to use the script again')
