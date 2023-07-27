@@ -7,12 +7,12 @@ def is_admin(func):
         if kwargs['user_type'] != 'admin':
             raise ValueError('Permission denied')
         else:
-            return func(user_type=kwargs['user_type'])
+            return func(**kwargs)
     return wrapper
 
 
 @is_admin
-def show_customer_receipt(user_type: str):
+def show_customer_receipt(**kwargs):
     print('Prepare to a mindblowing thing')
     print('If you will add 2 to 3 it will be:')
     print(2+3)
@@ -34,13 +34,10 @@ show_customer_receipt(user_type='admin')
 
 
 def catch_errors(func):
-    def wrapper(data):
+    def wrapper(**kwargs):
         try:
-            return func(data)
+            return func(**kwargs)
         except Exception as error:
-            # didn't find a method how to make example's text
-            # so decided to handle error just by mask mapping
-            # Will fix if needed
             print(f'Found 1 error during execution of \
                   your function: {type(error).__name__} {str(error)}')
 
@@ -48,12 +45,12 @@ def catch_errors(func):
 
 
 @catch_errors
-def some_function_with_risky_operation(data):
-    print(data['key'])
+def some_function_with_risky_operation(**kwargs):
+    print(kwargs['key'])
 
 
-some_function_with_risky_operation({'foo': 'bar'})
+some_function_with_risky_operation(**{'foo': 'bar'})
 # Found 1 error during execution of your function: KeyError no such key as foo
 
-some_function_with_risky_operation({'key': 'bar'})
+some_function_with_risky_operation(**{'key': 'bar'})
 # bar
